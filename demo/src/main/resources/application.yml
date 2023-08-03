@@ -1,0 +1,48 @@
+server:
+  port: 8080
+
+logging:
+  level:
+    root: ERROR
+    ch.post: DEBUG
+    org.apache.kafka: WARN
+    org.springframework: ERROR
+
+management:
+  endpoint.health:
+    show-details: always
+    show-components: always
+    probes.enabled: true
+  security.enabled: false
+  endpoints.web.exposure.include: '*'
+  metrics:
+    enable:
+      jvm: true
+
+spring:
+  task:
+    scheduling:
+      pool:
+        size: 20
+  output:
+    ansi:
+      enabled: ALWAYS
+  resources:
+    cache:
+      period: 0
+    chain:
+      enabled: true
+      cache: false
+  application:
+    name: lag
+  kafka:
+    client-id: lag
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: lag
+      isolation-level: read-committed
+      enable-auto-commit: false
+      auto-offset-reset: latest
+      max-poll-records: 1
+    producer:
+      acks: all
