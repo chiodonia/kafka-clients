@@ -1,5 +1,5 @@
 server:
-  port: 7070
+  port: 8080
 
 logging:
   level:
@@ -20,6 +20,7 @@ management:
       jvm: true
     tags:
       application: ${spring.application.name}
+
 spring:
   task:
     scheduling:
@@ -35,9 +36,9 @@ spring:
       enabled: true
       cache: false
   application:
-    name: app-producer
+    name: app-processor
   kafka:
     client-id: ${spring.application.name}
     bootstrap-servers: localhost:32000
-    producer:
-      acks: all
+    streams:
+      application-id: ${spring.application.name}

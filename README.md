@@ -21,13 +21,18 @@ export JAVA_HOME=$(/usr/libexec/java_home)
 cd app-producer
 mvn clean install spring-boot:build-image
 cd ..
+cd app-processor
+mvn clean install spring-boot:build-image
+cd ..
 cd app-consumer
 mvn clean install spring-boot:build-image
 cd ..
 kubectl apply -f k8s/app/namespace.yml
 kubectl -n kafka apply -f k8s/app/app-topics.yml
-kubectl -n app apply -f k8s/app/app-producer.yml
+kubectl -n app apply -f k8s/app/app-processor.yml
 kubectl -n app apply -f k8s/app/app-consumer.yml
+kubectl -n app apply -f k8s/app/app-producer.yml
+kubectl -n app apply -f k8s/app/app-processor-autoscaling.yml
 kubectl -n app apply -f k8s/app/app-consumer-autoscaling.yml
 ```
 ## Commands
@@ -50,15 +55,19 @@ kubectl delete -f https://github.com/kedacore/keda/releases/download/v2.11.2/ked
 kubectl delete -f 'https://strimzi.io/install/latest?namespace=kafka' 
 ```
 
-### Producer
+### app-producer
 http://localhost:7070/actuator/prometheus
 curl http://localhost:7070/produce/1
 
-### Consumer
-http://localhost:8080/actuator/prometheus
-curl http://localhost:8080/consume/1
+### app-processor
+http://localhost:9090/actuator/prometheus
 curl http://localhost:8080/processing/10
-curl http://localhost:8080/consumer-poll/10
+
+### app-consumer
+http://localhost:9090/actuator/prometheus
+curl http://localhost:9090/consume/1
+curl http://localhost:9090/processing/10
+curl http://localhost:9090/consumer-poll/10
 
 ### Infrastructure
 [Kafka-lag-exporter](http://localhost:9999)

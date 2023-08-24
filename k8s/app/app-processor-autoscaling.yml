@@ -4,10 +4,10 @@ metadata:
   name: kafka-scaledobject
   namespace: app
   labels:
-    deploymentName: app-consumer
+    deploymentName: app-processor
 spec:
   scaleTargetRef:
-    name: app-consumer
+    name: app-processor
   pollingInterval: 5
   cooldownPeriod: 20
   minReplicaCount: 1
@@ -15,8 +15,8 @@ spec:
     - type: kafka
       metadata:
         bootstrapServers: cluster-kafka-bootstrap.kafka.svc:9092
-        consumerGroup: app-consumer
-        topic: app.lab.Foo
+        processorGroup: app-processor
+        topic: app.lab.Bar
         # Optional
         lagThreshold: "10"
         offsetResetPolicy: latest

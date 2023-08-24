@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
-import static ch.post.lab.Config.TOPIC;
+import static ch.post.lab.Config.TOPIC_FOO;
 
 @RestController
 public class ConsumerService implements SchedulingConfigurer {
@@ -34,7 +34,7 @@ public class ConsumerService implements SchedulingConfigurer {
     public ConsumerService(KafkaProperties kafkaProperties, MeterRegistry meterRegistry) {
         this.consumer = new KafkaConsumer<>(
                 kafkaProperties.buildConsumerProperties(), new StringDeserializer(), new StringDeserializer());
-        this.consumer.subscribe(Collections.singleton(TOPIC), new ConsumerRebalanceListener() {
+        this.consumer.subscribe(Collections.singleton(TOPIC_FOO), new ConsumerRebalanceListener() {
             @Override
             public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
                 partitions.forEach(partition -> LOGGER.debug("Partition revoked {}", partition));

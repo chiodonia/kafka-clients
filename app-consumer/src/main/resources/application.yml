@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 9090
 
 logging:
   level:
@@ -38,10 +38,10 @@ spring:
   application:
     name: app-consumer
   kafka:
-    client-id: app.consumer
+    client-id: ${spring.application.name}
     bootstrap-servers: localhost:32000
     consumer:
-      group-id: app.consumer
+      group-id: ${spring.application.name}
       isolation-level: read-committed
       enable-auto-commit: false
       auto-offset-reset: latest

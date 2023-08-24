@@ -6,6 +6,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configuration
 @EnableScheduling
 public class Config {
-    public static final String TOPIC = "app.lab.Foo";
+    public static final String TOPIC_BAR = "app.lab.Bar";
 
 }
