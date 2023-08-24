@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-consumer
+  template:
+    metadata:
+      labels:
+        app: app-consumer
+    spec:
+      containers:
+        - name: app-consumer
+          image: app-consumer:0.1-SNAPSHOT
+          imagePullPolicy: Never
+#          resources:
+#            requests:
+#              memory: "256Mi"
+#              cpu: "100m"
+#            limits:
+#              memory: "512Mi"
+#              cpu: "200m"
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "k8s"
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "cluster-kafka-bootstrap.kafka.svc:9092"
+            - name: KAFKA_MAX_POLL_RECORDS
+              value: "1"
+            - name: KAFKA_PARTITION_ASSIGNMENT_STRATEGY
+              value: org.apache.kafka.clients.consumer.CooperativeStickyAssignor
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-consumer
+  annotations:
+    prometheus/scrape: "true"
+    prometheus/scheme: "http"
+    prometheus/path: "/actuator/prometheus"
+    prometheus/port: "8080"
+spec:
+  selector:
+    app: app-consumer
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: LoadBalancer

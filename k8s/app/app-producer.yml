@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-producer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-producer
+  template:
+    metadata:
+      labels:
+        app: app-producer
+    spec:
+      containers:
+        - name: app-producer
+          image: app-producer:0.1-SNAPSHOT
+          imagePullPolicy: Never
+#          resources:
+#            requests:
+#              memory: "256Mi"
+#              cpu: "100m"
+#            limits:
+#              memory: "1Gi"
+#              cpu: "200m"
+          ports:
+            - containerPort: 7070
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "k8s"
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "cluster-kafka-bootstrap.kafka.svc:9092"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 7070
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 7070
+            initialDelaySeconds: 5
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-producer
+  annotations:
+    prometheus/scrape: "true"
+    prometheus/scheme: "http"
+    prometheus/path: "/actuator/prometheus"
+    prometheus/port: "7070"
+spec:
+  selector:
+    app: app-producer
+  ports:
+    - port: 7070
+      targetPort: 7070
+  type: LoadBalancer

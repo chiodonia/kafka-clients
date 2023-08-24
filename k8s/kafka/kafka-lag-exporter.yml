@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-lag-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-lag-exporter
+  template:
+    metadata:
+      labels:
+        app: kafka-lag-exporter
+    spec:
+      containers:
+        - name: kafka-lag-exporter
+          image: seglo/kafka-lag-exporter:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9999
+          env:
+            - name: JAVA_OPTIONS
+              value: -Dconfig.file=/opt/docker/conf/application.conf
+          volumeMounts:
+            - name: conf-volume
+              mountPath: /opt/docker/conf/
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 9999
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 9999
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: conf-volume
+          configMap:
+            defaultMode: 420
+            name: application-conf
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: application-conf
+  labels:
+    name: application-conf
+data:
+  application.conf: |
+    kafka-lag-exporter {
+      reporters {
+        prometheus {
+          port = 9999
+        }
+      }
+      poll-interval = 5
+      lookup-table.memory.size = 120
+      clusters = [
+        {
+          name = "cluster"
+          bootstrap-brokers = "cluster-kafka-bootstrap.kafka.svc:9092"
+          topic-whitelist = [
+            "^app.+"
+          ]
+          consumer-properties = {
+            client.id = "kafka-lag-exporter-consumer"
+          }
+          admin-client-properties = {
+            client.id = "kafka-lag-exporter-admin"
+          }
+          labels = {
+          }
+        }
+      ]
+    }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-lag-exporter
+spec:
+  selector:
+    app: kafka-lag-exporter
+  ports:
+    - port: 9999
+      targetPort: 9999
+  type: LoadBalancer
+
+
