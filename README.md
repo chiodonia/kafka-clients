@@ -29,11 +29,11 @@ mvn clean install spring-boot:build-image
 cd ..
 kubectl apply -f k8s/app/namespace.yml
 kubectl -n kafka apply -f k8s/app/app-topics.yml
-kubectl -n app apply -f k8s/app/app-processor.yml
-kubectl -n app apply -f k8s/app/app-consumer.yml
 kubectl -n app apply -f k8s/app/app-producer.yml
-kubectl -n app apply -f k8s/app/app-processor-scaler.yml
+kubectl -n app apply -f k8s/app/app-consumer.yml
 kubectl -n app apply -f k8s/app/app-consumer-scaler.yml
+kubectl -n app apply -f k8s/app/app-processor.yml
+kubectl -n app apply -f k8s/app/app-processor-scaler.yml
 ```
 ## Commands
 ```
@@ -41,7 +41,7 @@ kubectl -n app get pods
 kubectl -n app get all 
 kubectl -n kafka get pods 
 kubectl -n monitoring get pods 
-kubectl -n monitoring logs -f prometheus-c6d444977-8rkgs
+kubectl -n app logs -f pod/app-producer-75848c69b9-c5sxm
 kubectl -n app logs -f deployment/app-consumer --all-containers=true
 kubectl -n app logs -f deployment/app-producer --all-containers=true
 kubectl -n app logs -f deployment/app-processor --all-containers=true
@@ -59,15 +59,15 @@ kubectl delete -f 'https://strimzi.io/install/latest?namespace=kafka'
 
 ### app-producer
 http://localhost:8070/actuator/prometheus
-curl http://localhost:8070/produce/10
+curl http://localhost:8070/produce/1
 
 ### app-processor
-http://localhost:9090/actuator/prometheus
-curl http://localhost:8080/processing/10000
+http://localhost:8080/actuator/prometheus
+curl http://localhost:8080/processing/1
 
 ### app-consumer
 http://localhost:8090/actuator/prometheus
-curl http://localhost:8090/consume/10
+curl http://localhost:8090/consume/100
 curl http://localhost:8090/processing/10
 curl http://localhost:8090/consumer-poll/10
 
