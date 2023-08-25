@@ -1,4 +1,4 @@
-# Monitoring kafka-clients
+# Kafka-clients
 
 ## Installation
 ```
