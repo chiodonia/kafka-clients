@@ -1,22 +1,20 @@
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
-  name: kafka-scaledobject
+  name: app-processor-scaler
   namespace: app
-  labels:
-    deploymentName: app-processor
 spec:
   scaleTargetRef:
+    kind: Deployment
     name: app-processor
-  pollingInterval: 5
-  cooldownPeriod: 20
+  pollingInterval: 20
+  cooldownPeriod: 60
   minReplicaCount: 1
   triggers:
     - type: kafka
       metadata:
         bootstrapServers: cluster-kafka-bootstrap.kafka.svc:9092
-        processorGroup: app-processor
+        consumerGroup: app-processor
         topic: app.lab.Bar
-        # Optional
-        lagThreshold: "10"
-        offsetResetPolicy: latest
+        lagThreshold: "100"
+        offsetResetPolicy: earliest

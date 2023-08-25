@@ -24,7 +24,7 @@ spec:
 #              memory: "512Mi"
 #              cpu: "200m"
           ports:
-            - containerPort: 9090
+            - containerPort: 8090
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "k8s"
@@ -37,13 +37,13 @@ spec:
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
-              port: 9090
+              port: 8090
             initialDelaySeconds: 5
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
-              port: 9090
+              port: 8090
             initialDelaySeconds: 5
             periodSeconds: 10
 ---
@@ -55,11 +55,11 @@ metadata:
     prometheus/scrape: "true"
     prometheus/scheme: "http"
     prometheus/path: "/actuator/prometheus"
-    prometheus/port: "9090"
+    prometheus/port: "8090"
 spec:
   selector:
     app: app-consumer
   ports:
-    - port: 9090
-      targetPort: 9090
+    - port: 8090
+      targetPort: 8090
   type: LoadBalancer

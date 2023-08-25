@@ -48,21 +48,21 @@ public class ConsumerService implements SchedulingConfigurer {
     }
 
     @GetMapping("/consume/{recordsPerSecond}")
-    long produce(@PathVariable long recordsPerSecond) {
+    public long produce(@PathVariable long recordsPerSecond) {
         this.recordsPerSecond = recordsPerSecond;
         LOGGER.info("Consuming {} records/second", recordsPerSecond);
         return this.recordsPerSecond;
     }
 
     @GetMapping("/processing/{durationMillis}")
-    long processing(@PathVariable long durationMillis) {
+    public long processing(@PathVariable long durationMillis) {
         this.processingDuration = Duration.ofMillis(durationMillis);
         LOGGER.info("Processing will take {} Millis", processingDuration.toMillis());
         return processingDuration.toMillis();
     }
 
     @GetMapping("/consumer-poll/{durationMillis}")
-    long consumerPoll(@PathVariable long durationMillis) {
+    public long consumerPoll(@PathVariable long durationMillis) {
         this.consumerPollDuration = Duration.ofMillis(durationMillis);
         LOGGER.info("Consumer will poll for {} Millis", consumerPollDuration.toMillis());
         return consumerPollDuration.toMillis();

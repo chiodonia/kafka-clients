@@ -33,7 +33,7 @@ public class ProducerService implements SchedulingConfigurer {
     }
 
     @GetMapping("/produce/{recordsPerSecond}")
-    long produce(@PathVariable long recordsPerSecond) {
+    public long produce(@PathVariable long recordsPerSecond) {
         this.recordsPerSecond = recordsPerSecond;
         LOGGER.info("Producing {} records/second", recordsPerSecond);
         return this.recordsPerSecond;

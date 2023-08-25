@@ -10,7 +10,7 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <logger name="org.apache.kafka" level="indo">
+    <logger name="org.apache.kafka" level="info">
         <appender-ref ref="STDOUT"/>
     </logger>
 

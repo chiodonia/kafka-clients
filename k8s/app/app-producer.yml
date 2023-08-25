@@ -24,7 +24,7 @@ spec:
 #              memory: "1Gi"
 #              cpu: "200m"
           ports:
-            - containerPort: 7070
+            - containerPort: 8070
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "k8s"
@@ -33,13 +33,13 @@ spec:
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
-              port: 7070
+              port: 8070
             initialDelaySeconds: 5
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
-              port: 7070
+              port: 8070
             initialDelaySeconds: 5
             periodSeconds: 10
 ---
@@ -51,11 +51,11 @@ metadata:
     prometheus/scrape: "true"
     prometheus/scheme: "http"
     prometheus/path: "/actuator/prometheus"
-    prometheus/port: "7070"
+    prometheus/port: "8070"
 spec:
   selector:
     app: app-producer
   ports:
-    - port: 7070
-      targetPort: 7070
+    - port: 8070
+      targetPort: 8070
   type: LoadBalancer

@@ -32,8 +32,8 @@ kubectl -n kafka apply -f k8s/app/app-topics.yml
 kubectl -n app apply -f k8s/app/app-processor.yml
 kubectl -n app apply -f k8s/app/app-consumer.yml
 kubectl -n app apply -f k8s/app/app-producer.yml
-kubectl -n app apply -f k8s/app/app-processor-autoscaling.yml
-kubectl -n app apply -f k8s/app/app-consumer-autoscaling.yml
+kubectl -n app apply -f k8s/app/app-processor-scaler.yml
+kubectl -n app apply -f k8s/app/app-consumer-scaler.yml
 ```
 ## Commands
 ```
@@ -43,6 +43,8 @@ kubectl -n kafka get pods
 kubectl -n monitoring get pods 
 kubectl -n monitoring logs -f prometheus-c6d444977-8rkgs
 kubectl -n app logs -f deployment/app-consumer --all-containers=true
+kubectl -n app logs -f deployment/app-producer --all-containers=true
+kubectl -n app logs -f deployment/app-processor --all-containers=true
 kubectl -n app get events --sort-by='.metadata.creationTimestamp'
 kubectl -n monitoring get serviceaccounts/prometheus -o yaml
 ```
@@ -56,18 +58,18 @@ kubectl delete -f 'https://strimzi.io/install/latest?namespace=kafka'
 ```
 
 ### app-producer
-http://localhost:7070/actuator/prometheus
-curl http://localhost:7070/produce/1
+http://localhost:8070/actuator/prometheus
+curl http://localhost:8070/produce/10
 
 ### app-processor
 http://localhost:9090/actuator/prometheus
-curl http://localhost:8080/processing/10
+curl http://localhost:8080/processing/10000
 
 ### app-consumer
-http://localhost:9090/actuator/prometheus
-curl http://localhost:9090/consume/1
-curl http://localhost:9090/processing/10
-curl http://localhost:9090/consumer-poll/10
+http://localhost:8090/actuator/prometheus
+curl http://localhost:8090/consume/10
+curl http://localhost:8090/processing/10
+curl http://localhost:8090/consumer-poll/10
 
 ### Infrastructure
 [Kafka-lag-exporter](http://localhost:9999)
