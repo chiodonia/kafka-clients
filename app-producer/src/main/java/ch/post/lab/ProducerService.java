@@ -20,11 +20,10 @@ import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
-import static ch.post.lab.Config.TOPIC_BAR;
-
 @RestController
 public class ProducerService implements SchedulingConfigurer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProducerService.class);
+    private static final String TOPIC = "app.lab.Bar";
     private final Producer<String, String> producer;
     private long recordsPerSecond = 1;
 
@@ -43,7 +42,7 @@ public class ProducerService implements SchedulingConfigurer {
     private void produce() {
         if (this.recordsPerSecond > 0) {
             producer.send(
-                    new ProducerRecord<>(TOPIC_BAR, key(), value()),
+                    new ProducerRecord<>(TOPIC, key(), value()),
                     (metadata, e) -> {
                         if (e == null) {
                             LOGGER.info("Produced: {}", metadata);

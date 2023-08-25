@@ -28,10 +28,9 @@ public class ProcessorConfig {
     private static final String TOPIC_BAR = "app.lab.Bar";
     private static final String TOPIC_FOO = "app.lab.Foo";
     public static final String PREFIX = "foo.";
+    private Duration processingDuration = Duration.ofMillis(0L);
     @Autowired
     private MeterRegistry meterRegistry;
-
-    private Duration processingDuration = Duration.ofMillis(0L);
 
     @Bean
     public StreamsBuilderFactoryBeanConfigurer configurer() {

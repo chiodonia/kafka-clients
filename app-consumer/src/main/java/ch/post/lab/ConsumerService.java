@@ -21,20 +21,19 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
-import static ch.post.lab.Config.TOPIC_FOO;
-
 @RestController
 public class ConsumerService implements SchedulingConfigurer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsumerService.class);
+    private static final String TOPIC = "app.lab.Bar";
     private final Consumer<String, String> consumer;
-    private long recordsPerSecond = 1;
+    private long recordsPerSecond = 10;
     private Duration processingDuration = Duration.ofMillis(0L);
-    private Duration consumerPollDuration = Duration.ofMillis(10L);
+    private Duration consumerPollDuration = Duration.ofMillis(100L);
 
     public ConsumerService(KafkaProperties kafkaProperties, MeterRegistry meterRegistry) {
         this.consumer = new KafkaConsumer<>(
                 kafkaProperties.buildConsumerProperties(), new StringDeserializer(), new StringDeserializer());
-        this.consumer.subscribe(Collections.singleton(TOPIC_FOO), new ConsumerRebalanceListener() {
+        this.consumer.subscribe(Collections.singleton(TOPIC), new ConsumerRebalanceListener() {
             @Override
             public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
                 partitions.forEach(partition -> LOGGER.debug("Partition revoked {}", partition));
