@@ -79,14 +79,6 @@ data:
           - "alertmanager.monitoring.svc:9093"
 
     scrape_configs:
-      - job_name: 'kafka-lag-exporter'
-        scrape_interval: 5s
-        metrics_path: /
-        static_configs:
-        - targets: ['kafka-lag-exporter.kafka.svc:9999']
-          labels:
-            namespace: kafka
-
       - job_name: 'kubernetes-service-endpoints'
         scrape_timeout: 5s
         kubernetes_sd_configs:

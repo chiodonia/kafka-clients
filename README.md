@@ -39,13 +39,13 @@ kubectl -n app apply -f k8s/app/app-processor-scaler.yml
 ```
 kubectl -n app get pods 
 kubectl -n app get all 
-kubectl -n kafka get pods 
+kubectl -n kafka get all 
 kubectl -n monitoring get pods 
-kubectl -n app logs -f pod/app-producer-75848c69b9-c5sxm
+kubectl -n app logs -f pod/app-consumer-c78c5587c-svt98
 kubectl -n app logs -f deployment/app-consumer --all-containers=true
 kubectl -n app logs -f deployment/app-producer --all-containers=true
 kubectl -n app logs -f deployment/app-processor --all-containers=true
-kubectl -n app get events --sort-by='.metadata.creationTimestamp'
+kubectl -n monitoring get events --sort-by='.metadata.creationTimestamp'
 kubectl -n monitoring get serviceaccounts/prometheus -o yaml
 ```
 ## Uninstall
@@ -59,7 +59,7 @@ kubectl delete -f 'https://strimzi.io/install/latest?namespace=kafka'
 
 ### app-producer
 http://localhost:8070/actuator/prometheus
-curl http://localhost:8070/produce/1
+curl http://localhost:8070/produce/10
 
 ### app-processor
 http://localhost:8080/actuator/prometheus
@@ -68,7 +68,7 @@ curl http://localhost:8080/processing/1
 ### app-consumer
 http://localhost:8090/actuator/prometheus
 curl http://localhost:8090/consume/100
-curl http://localhost:8090/processing/10
+curl http://localhost:8090/processing/1000
 curl http://localhost:8090/consumer-poll/10
 
 ### Infrastructure
@@ -98,5 +98,9 @@ kafka_consumer_fetch_manager_records_lag_avg{client_id="app.consumer",kafka_vers
   - Kafka consumer
   - kafka producer
   - kafka streams
+    - https://github.com/confluentinc/jmx-monitoring-stacks/tree/main/jmxexporter-prometheus-grafana
+    - https://github.com/prometheus/jmx_exporter/blob/main/example_configs/kafka_stream.yml
+    - https://grafana.com/grafana/dashboards/13966-kafka-streams-dashboard/
   - Brokers
+    - https://github.com/strimzi/strimzi-kafka-operator/tree/main/examples/metrics/grafana-dashboards
 

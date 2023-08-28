@@ -30,6 +30,8 @@ spec:
               value: "k8s"
             - name: KAFKA_BOOTSTRAP_SERVERS
               value: "cluster-kafka-bootstrap.kafka.svc:9092"
+            - name: KAFKA_STREAMS_MUN_STREAM_THREADS
+              value: "3"
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness

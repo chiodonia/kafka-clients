@@ -18,7 +18,7 @@
       }
     ]
   },
-  "description": "Kafka Clients - Consumers",
+  "description": "Kafka consumers",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "gnetId": null,
@@ -74,7 +74,7 @@
       "pluginVersion": "8.2.3",
       "targets": [
         {
-          "expr": "kafka_consumer_coordinator_commit_rate{client_id=~\"$client_id\", env=\"$env\"}",
+          "expr": "kafka_consumer_coordinator_commit_rate{kubernetes_namespace=\"$kubernetes_namespace\", kubernetes_service=\"$kubernetes_service\", kubernetes_pod=\"$kubernetes_pod\",client_id=\"$client_id\"}",
           "interval": "",
           "legendFormat": "{{instance}}",
           "refId": "A"
@@ -134,7 +134,7 @@
       "pluginVersion": "8.2.3",
       "targets": [
         {
-          "expr": "kafka_consumer_fetch_manager_fetch_throttle_time_avg{client_id=~\"$client_id\", env=\"$env\"}",
+          "expr": "kafka_consumer_fetch_manager_fetch_throttle_time_avg{kubernetes_namespace=\"$kubernetes_namespace\", kubernetes_service=\"$kubernetes_service\", kubernetes_pod=\"$kubernetes_pod\",client_id=\"$client_id\"}",
           "instant": false,
           "interval": "",
           "legendFormat": "{{instance}}",
@@ -194,7 +194,7 @@
       "pluginVersion": "8.2.3",
       "targets": [
         {
-          "expr": "kafka_consumer_failed_authentication_total{env=\"$env\",client_id=~\"$client_id\"}",
+          "expr": "kafka_consumer_failed_authentication_total{kubernetes_namespace=\"$kubernetes_namespace\", kubernetes_service=\"$kubernetes_service\", kubernetes_pod=\"$kubernetes_pod\",client_id=\"$client_id\"}",
           "instant": false,
           "interval": "",
           "legendFormat": "{{instance}}",
@@ -253,7 +253,7 @@
       "pluginVersion": "8.2.3",
       "targets": [
         {
-          "expr": "kafka_consumer_coordinator_rebalance_rate_per_hour{client_id=~\"$client_id\", env=\"$env\"} + kafka_consumer_coordinator_failed_rebalance_rate_per_hour{client_id=~\"$client_id\", env=\"$env\"}",
+          "expr": "kafka_consumer_coordinator_rebalance_rate_per_hour{kubernetes_namespace=\"$kubernetes_namespace\", kubernetes_service=\"$kubernetes_service\", kubernetes_pod=\"$kubernetes_pod\",client_id=\"$client_id\"} + kafka_consumer_coordinator_failed_rebalance_rate_per_hour{kubernetes_namespace=\"$kubernetes_namespace\", kubernetes_service=\"$kubernetes_service\", kubernetes_pod=\"$kubernetes_pod\",client_id=\"$client_id\"}",
           "interval": "",
           "legendFormat": "{{instance}}",
           "refId": "A"
@@ -263,195 +263,6 @@
       "timeShift": null,
       "title": "Rebalance rate per hour",
       "type": "stat"
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "Prometheus",
-      "description": "Offset lag per consumer group, summed by topic",
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 4
-      },
-      "hiddenSeries": false,
-      "id": 28,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.2.3",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by (topic) (kafka_consumergroup_group_lag{group=~\"${group_id}\"})",
-          "interval": "",
-          "legendFormat": "{{topic}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Consumer group lag in records ",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "Prometheus",
-      "description": "",
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 4
-      },
-      "hiddenSeries": false,
-      "id": 45,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "8.2.3",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum by (topic) ((kafka_consumergroup_group_lag_seconds{group=~\"${group_id}\"} > 0))",
-          "interval": "",
-          "legendFormat": "{{topic}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-        {
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "value": 30,
-          "yaxis": "left"
-        }
-      ],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Consumer group lag in seconds ",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "s",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
     },
     {
       "collapsed": false,
@@ -510,7 +321,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "kafka_consumer_coordinator_commit_latency_avg{client_id=~\"$client_id\", env=\"$env\"}",
+          "expr": "kafka_consumer_coordinator_commit_latency_avg{kubernetes_namespace=\"$kubernetes_namespace\", kubernetes_service=\"$kubernetes_service\", kubernetes_pod=\"$kubernetes_pod\",client_id=\"$client_id\"}",
           "interval": "",
           "legendFormat": "{{instance}}",
           "refId": "A"
@@ -600,7 +411,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "kafka_consumer_coordinator_commit_rate{client_id=~\"$client_id\", env=\"$env\"}",
+          "expr": "kafka_consumer_coordinator_commit_rate{kubernetes_namespace=\"$kubernetes_namespace\", kubernetes_service=\"$kubernetes_service\", kubernetes_pod=\"$kubernetes_pod\",client_id=\"$client_id\"}",
           "interval": "",
           "legendFormat": "{{instance}}",
           "refId": "A"
@@ -710,7 +521,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(kafka_consumer_fetch_manager_fetch_total{client_id=~\"$client_id\", env=\"$env\"}[$__rate_interval])",
+          "expr": "rate(kafka_consumer_fetch_manager_fetch_total{kubernetes_namespace=\"$kubernetes_namespace\", kubernetes_service=\"$kubernetes_service\", kubernetes_pod=\"$kubernetes_pod\",client_id=\"$client_id\"}[$__rate_interval])",
           "instant": false,
           "interval": "",
           "legendFormat": "{{instance}}",
@@ -801,7 +612,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "kafka_consumer_fetch_manager_fetch_size_avg{topic=~\"$topic\", client_id=~\"$client_id\", env=\"$env\"}",
+          "expr": "kafka_consumer_fetch_manager_fetch_size_avg{topic=~\"$topic\", kubernetes_namespace=\"$kubernetes_namespace\", kubernetes_service=\"$kubernetes_service\", kubernetes_pod=\"$kubernetes_pod\",client_id=\"$client_id\"}",
           "interval": "",
           "legendFormat": "{{instance}}",
           "refId": "A"
@@ -891,7 +702,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "kafka_consumer_fetch_manager_fetch_latency_avg{client_id=~\"$client_id\", env=\"$env\"}",
+          "expr": "kafka_consumer_fetch_manager_fetch_latency_avg{kubernetes_namespace=\"$kubernetes_namespace\", kubernetes_service=\"$kubernetes_service\", kubernetes_pod=\"$kubernetes_pod\",client_id=\"$client_id\"}",
           "interval": "",
           "legendFormat": "{{instance}}",
           "refId": "A"
@@ -1001,7 +812,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(kafka_consumer_fetch_manager_bytes_consumed_total{topic=~\"$topic\", client_id=~\"$client_id\", env=\"$env\"}[$__rate_interval])",
+          "expr": "rate(kafka_consumer_fetch_manager_bytes_consumed_total{topic=~\"$topic\", kubernetes_namespace=\"$kubernetes_namespace\", kubernetes_service=\"$kubernetes_service\", kubernetes_pod=\"$kubernetes_pod\",client_id=\"$client_id\"}[$__rate_interval])",
           "instant": false,
           "interval": "",
           "legendFormat": "{{client_id}} - {{instance}}",
@@ -1099,7 +910,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(kafka_consumer_fetch_manager_records_consumed_total{topic=~\"$topic\", client_id=\"$client_id\", env=\"$env\"}[$__rate_interval])",
+          "expr": "rate(kafka_consumer_fetch_manager_records_consumed_total{kubernetes_namespace=\"$kubernetes_namespace\", kubernetes_service=\"$kubernetes_service\", kubernetes_pod=\"$kubernetes_pod\",client_id=\"$client_id\", topic=\"$topic\"}[$__rate_interval])",
           "instant": false,
           "interval": "",
           "legendFormat": "{{client_id}} - {{instance}}",
@@ -1196,7 +1007,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(kafka_consumer_fetch_manager_bytes_consumed_total{topic!=\"\", client_id=\"$client_id\", env=\"$env\"}[$__rate_interval])) by (topic)",
+          "expr": "sum(rate(kafka_consumer_fetch_manager_bytes_consumed_total{topic!=\"\", kubernetes_namespace=\"$kubernetes_namespace\", kubernetes_service=\"$kubernetes_service\", kubernetes_pod=\"$kubernetes_pod\",client_id=\"$client_id\"}[$__rate_interval])) by (topic)",
           "instant": false,
           "interval": "",
           "legendFormat": "{{topic}}",
@@ -1294,7 +1105,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (topic, instance) (rate(kafka_consumer_fetch_manager_records_consumed_total{topic!=\"\", client_id=\"$client_id\", env=\"$env\"}[$__rate_interval]))",
+          "expr": "sum by (topic, kubernetes_pod) (rate(kafka_consumer_fetch_manager_records_consumed_total{topic!=\"\", kubernetes_namespace=\"$kubernetes_namespace\", kubernetes_service=\"$kubernetes_service\", kubernetes_pod=\"$kubernetes_pod\",client_id=\"$client_id\"}[$__rate_interval]))",
           "instant": false,
           "interval": "",
           "legendFormat": "{{instance}}-{{topic}}",
@@ -1405,7 +1216,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "kafka_consumer_connection_count_total",
+          "expr": "kafka_consumer_connection_count{kubernetes_namespace=\"$kubernetes_namespace\", kubernetes_service=\"$kubernetes_service\", kubernetes_pod=\"$kubernetes_pod\",client_id=\"$client_id\"}",
           "instant": false,
           "legendFormat": "{{client_id}} - {{instance}}",
           "refId": "B"
@@ -1501,7 +1312,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "kafka_consumer_node_response_rate{client_id=~\"$client_id\", env=\"$env\"}",
+          "expr": "kafka_consumer_node_response_rate{kubernetes_namespace=\"$kubernetes_namespace\", kubernetes_service=\"$kubernetes_service\", kubernetes_pod=\"$kubernetes_pod\",client_id=\"$client_id\"}",
           "instant": false,
           "interval": "",
           "legendFormat": "",
@@ -1554,119 +1365,94 @@
   "schemaVersion": 31,
   "style": "dark",
   "tags": [
-    "kafka",
-    "consumer",
-    "client"
+    "Kafka-clients",
+    "Consumer"
   ],
   "templating": {
     "list": [
       {
         "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "test",
-          "value": "test"
-        },
+        "current": {},
         "datasource": "Prometheus",
-        "definition": "label_values(env)",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": "env",
+        "label": "Namespace",
         "multi": false,
-        "name": "env",
+        "name": "kubernetes_namespace",
         "options": [],
-        "query": {
-          "query": "label_values(env)",
-          "refId": "Prometheus-env-Variable-Query"
-        },
-        "refresh": 1,
+        "query": "label_values(kafka_consumer_connection_count{}, kubernetes_namespace)",
+        "refresh": 2,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
+        "sort": 0,
         "tagValuesQuery": "",
+        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
         "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "app.Consumer",
-          "value": "app.Consumer"
-        },
+        "current": {},
         "datasource": "Prometheus",
-        "definition": "label_values(kafka_consumer_response_rate{env=\"$env\"}, client_id)",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": null,
+        "label": "Service",
+        "multi": false,
+        "name": "kubernetes_service",
+        "options": [],
+        "query": "label_values(kafka_consumer_connection_count{kubernetes_namespace=\"$kubernetes_namespace\"}, kubernetes_service)",
+        "refresh": 2,
+        "regex": "",
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "Prometheus",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Pod",
+        "multi": false,
+        "name": "kubernetes_pod",
+        "options": [],
+        "query": "label_values(kafka_consumer_connection_count{kubernetes_namespace=\"$kubernetes_namespace\", kubernetes_service=\"$kubernetes_service\"}, kubernetes_pod)",
+        "refresh": 2,
+        "regex": "",
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "Prometheus",
+        "hide": 0,
+        "includeAll": false,
+        "label": "client_id",
         "multi": false,
         "name": "client_id",
         "options": [],
-        "query": {
-          "query": "label_values(kafka_consumer_response_rate{env=\"$env\"}, client_id)",
-          "refId": "StandardVariableQuery"
-        },
+        "query": "label_values(kafka_consumer_connection_count{kubernetes_namespace=\"$kubernetes_namespace\", kubernetes_service=\"$kubernetes_service\", kubernetes_pod=\"$kubernetes_pod\"}, client_id)",
         "refresh": 2,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "datasource": "Prometheus",
-        "definition": "label_values(group)",
-        "description": null,
-        "error": null,
-        "hide": 0,
-        "includeAll": true,
-        "label": "group_id",
-        "multi": true,
-        "name": "group_id",
-        "options": [],
-        "query": {
-          "query": "label_values(group)",
-          "refId": "Prometheus-group_id-Variable-Query"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
+        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
       },
       {
         "allValue": null,
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
         "datasource": "Prometheus",
-        "definition": "label_values(topic)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1675,10 +1461,7 @@
         "multi": true,
         "name": "topic",
         "options": [],
-        "query": {
-          "query": "label_values(topic)",
-          "refId": "Prometheus-topic-Variable-Query"
-        },
+        "query": "label_values(kafka_consumer_fetch_manager_bytes_consumed_rate{kubernetes_namespace=\"$kubernetes_namespace\", kubernetes_service=\"$kubernetes_service\", kubernetes_pod=\"$kubernetes_pod\", client_id=\"$client_id\"}, topic)",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -1709,7 +1492,7 @@
     ]
   },
   "timezone": "",
-  "title": "Kafka Clients - Consumers",
-  "uid": "kafka-clients-consumers",
+  "title": "Kafka consumers",
+  "uid": "kafka-clients-consumer",
   "version": 3
 }

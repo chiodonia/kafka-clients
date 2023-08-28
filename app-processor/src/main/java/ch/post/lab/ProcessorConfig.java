@@ -4,7 +4,7 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.Printed;
+import org.apache.kafka.streams.kstream.Named;
 import org.apache.kafka.streams.kstream.Produced;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,17 +27,16 @@ public class ProcessorConfig {
     }
 
     private void topology(StreamsBuilder builder) {
-        KStream<String, String> stream = builder.stream(TOPIC_BAR, Consumed.with(Serdes.String(), Serdes.String()))
+        KStream<String, String> stream = builder.stream(TOPIC_BAR, Consumed.with(Serdes.String(), Serdes.String()).withName(TOPIC_BAR))
                 .peek((key, value) -> {
                     try {
                         Thread.sleep(processingDuration.toMillis());
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                })
-                .mapValues((key, value) -> PREFIX.concat(value));
-        stream.print(Printed.toSysOut());
-        stream.to(TOPIC_FOO, Produced.with(Serdes.String(), Serdes.String()));
+                }, Named.as("simulate-processing-time"))
+                .mapValues((key, value) -> PREFIX.concat(value), Named.as("prefix-record-value"));
+        stream.to(TOPIC_FOO, Produced.with(Serdes.String(), Serdes.String()).withName(TOPIC_FOO));
     }
 
     @GetMapping("/processing/{durationMillis}")

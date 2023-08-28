@@ -69,6 +69,8 @@ data:
         type: prometheus
         access: proxy
         url: http://prometheus:9090
+        editable: false
+        isDefault: false
 ---
 apiVersion: v1
 kind: ConfigMap

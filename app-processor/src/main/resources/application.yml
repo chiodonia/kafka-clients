@@ -6,7 +6,9 @@ logging:
     root: ERROR
     ch.post: DEBUG
     org.apache.kafka: INFO
+    org.apache.kafka.streams: INFO
     org.springframework: WARN
+    org.springframework.kafka: WARN
 
 management:
   endpoint.health:
@@ -42,3 +44,6 @@ spring:
     bootstrap-servers: localhost:32000
     streams:
       application-id: ${spring.application.name}
+      properties:
+        processing.guarantee: exactly_once_v2
+        metrics.recording.level: TRACE

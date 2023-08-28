@@ -1,3 +1,133 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: kafka-jmx-exporter-configmap
+data:
+  kafka-jmx-exporter-yml: |
+    lowercaseOutputName: true
+    
+    rules:
+      # Special cases and very specific rules
+      - pattern : kafka.server<type=(.+), name=(.+), clientId=(.+), topic=(.+), partition=(.*)><>Value
+        name: kafka_server_$1_$2
+        type: GAUGE
+        labels:
+          clientId: "$3"
+          topic: "$4"
+          partition: "$5"
+      - pattern : kafka.server<type=(.+), name=(.+), clientId=(.+), brokerHost=(.+), brokerPort=(.+)><>Value
+        name: kafka_server_$1_$2
+        type: GAUGE
+        labels:
+          clientId: "$3"
+          broker: "$4:$5"
+      - pattern : kafka.coordinator.(\w+)<type=(.+), name=(.+)><>Value
+        name: kafka_coordinator_$1_$2_$3
+        type: GAUGE
+      
+      # Generic per-second counters with 0-2 key/value pairs
+      - pattern: kafka.(\w+)<type=(.+), name=(.+)PerSec\w*, (.+)=(.+), (.+)=(.+)><>Count
+        name: kafka_$1_$2_$3_total
+        type: COUNTER
+        labels:
+          "$4": "$5"
+          "$6": "$7"
+      - pattern: kafka.(\w+)<type=(.+), name=(.+)PerSec\w*, (.+)=(.+)><>Count
+        name: kafka_$1_$2_$3_total
+        type: COUNTER
+        labels:
+          "$4": "$5"
+      - pattern: kafka.(\w+)<type=(.+), name=(.+)PerSec\w*><>Count
+        name: kafka_$1_$2_$3_total
+        type: COUNTER
+      
+      # Quota specific rules
+      - pattern: kafka.server<type=(.+), user=(.+), client-id=(.+)><>([a-z-]+)
+        name: kafka_server_quota_$4
+        type: GAUGE
+        labels:
+          resource: "$1"
+          user: "$2"
+          clientId: "$3"
+      - pattern: kafka.server<type=(.+), client-id=(.+)><>([a-z-]+)
+        name: kafka_server_quota_$3
+        type: GAUGE
+        labels:
+          resource: "$1"
+          clientId: "$2"
+      - pattern: kafka.server<type=(.+), user=(.+)><>([a-z-]+)
+        name: kafka_server_quota_$3
+        type: GAUGE
+        labels:
+          resource: "$1"
+          user: "$2"
+      
+      # Generic gauges with 0-2 key/value pairs
+      - pattern: kafka.(\w+)<type=(.+), name=(.+), (.+)=(.+), (.+)=(.+)><>Value
+        name: kafka_$1_$2_$3
+        type: GAUGE
+        labels:
+          "$4": "$5"
+          "$6": "$7"
+      - pattern: kafka.(\w+)<type=(.+), name=(.+), (.+)=(.+)><>Value
+        name: kafka_$1_$2_$3
+        type: GAUGE
+        labels:
+          "$4": "$5"
+      - pattern: kafka.(\w+)<type=(.+), name=(.+)><>Value
+        name: kafka_$1_$2_$3
+        type: GAUGE
+      
+      # Emulate Prometheus 'Summary' metrics for the exported 'Histogram's.
+      #
+      # Note that these are missing the '_sum' metric!
+      - pattern: kafka.(\w+)<type=(.+), name=(.+), (.+)=(.+), (.+)=(.+)><>Count
+        name: kafka_$1_$2_$3_count
+        type: COUNTER
+        labels:
+          "$4": "$5"
+          "$6": "$7"
+      - pattern: kafka.(\w+)<type=(.+), name=(.+), (.+)=(.*), (.+)=(.+)><>(\d+)thPercentile
+        name: kafka_$1_$2_$3
+        type: GAUGE
+        labels:
+          "$4": "$5"
+          "$6": "$7"
+          quantile: "0.$8"
+      - pattern: kafka.(\w+)<type=(.+), name=(.+), (.+)=(.+)><>Count
+        name: kafka_$1_$2_$3_count
+        type: COUNTER
+        labels:
+          "$4": "$5"
+      - pattern: kafka.(\w+)<type=(.+), name=(.+), (.+)=(.*)><>(\d+)thPercentile
+        name: kafka_$1_$2_$3
+        type: GAUGE
+        labels:
+          "$4": "$5"
+          quantile: "0.$6"
+      - pattern: kafka.(\w+)<type=(.+), name=(.+)><>Count
+        name: kafka_$1_$2_$3_count
+        type: COUNTER
+      - pattern: kafka.(\w+)<type=(.+), name=(.+)><>(\d+)thPercentile
+        name: kafka_$1_$2_$3
+        type: GAUGE
+        labels:
+          quantile: "0.$4"
+      
+      # Generic gauges for MeanRate Percent
+      # Ex) kafka.server<type=KafkaRequestHandlerPool, name=RequestHandlerAvgIdlePercent><>MeanRate
+      - pattern: kafka.(\w+)<type=(.+), name=(.+)Percent\w*><>MeanRate
+        name: kafka_$1_$2_$3_percent
+        type: GAUGE
+      - pattern: kafka.(\w+)<type=(.+), name=(.+)Percent\w*><>Value
+        name: kafka_$1_$2_$3_percent
+        type: GAUGE
+      - pattern: kafka.(\w+)<type=(.+), name=(.+)Percent\w*, (.+)=(.+)><>Value
+        name: kafka_$1_$2_$3_percent
+        type: GAUGE
+        labels:
+          "$4": "$5"
+---
 apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
@@ -21,6 +151,12 @@ spec:
               nodePort: 32000
               advertisedHost: localhost
               advertisedPort: 32000
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          name: kafka-jmx-exporter-configmap
+          key: kafka-jmx-exporter-yml
     config:
       offsets.topic.replication.factor: 1
       transaction.state.log.replication.factor: 1
@@ -37,3 +173,23 @@ spec:
       type: ephemeral
   entityOperator:
     topicOperator: { }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-cluster-metrics
+  annotations:
+    prometheus/scrape: "true"
+    prometheus/scheme: "http"
+    prometheus/path: "/metrics"
+    prometheus/port: "9404"
+spec:
+  selector:
+    statefulset.kubernetes.io/pod-name: cluster-kafka-0
+    strimzi.io/cluster: cluster
+    strimzi.io/kind: Kafka
+    strimzi.io/name: cluster-kafka
+  ports:
+    - port: 9404
+      targetPort: 9404
+  type: LoadBalancer

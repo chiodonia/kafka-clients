@@ -1,3 +1,6 @@
 spring:
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    streams:
+      properties:
+        num.stream.threads: ${KAFKA_STREAMS_MUN_STREAM_THREADS:1}
