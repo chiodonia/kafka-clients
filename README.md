@@ -77,30 +77,14 @@ curl http://localhost:8090/consumer-poll/10
 [Grafana](http://localhost:3000)
 Bootstrap server: localhost:32000
 
-# Metrics
+# Kafka client metrics
 The window of time a metrics sample is computed over: metrics.sample.window.ms (30 seconds) 
-## Consumer
-
-### TYPE kafka_consumer_fetch_manager_records_lag gauge
-kafka_consumer_fetch_manager_records_lag{client_id="app.consumer",kafka_version="3.5.1",partition="4",topic="app_lab_Foo",} 0.0
-
-### TYPE kafka_consumer_fetch_manager_records_lag_max gauge
-kafka_consumer_fetch_manager_records_lag_max{client_id="app.consumer",kafka_version="3.5.1",partition="4",topic="app_lab_Foo",} 9.0
-
-### TYPE kafka_consumer_fetch_manager_records_lag_avg gauge
-kafka_consumer_fetch_manager_records_lag_avg{client_id="app.consumer",kafka_version="3.5.1",partition="4",topic="app_lab_Foo",} 4.090909090909091
 
 # TODO
 - Dashboards
+  - kafka streams: complete
   - k8s: https://github.com/grafana/kubernetes-app/tree/master/src/dashboards
          https://github.com/dotdc/grafana-dashboards-kubernetes
-  - JVM:
-  - Kafka consumer
-  - kafka producer
-  - kafka streams
-    - https://github.com/confluentinc/jmx-monitoring-stacks/tree/main/jmxexporter-prometheus-grafana
-    - https://github.com/prometheus/jmx_exporter/blob/main/example_configs/kafka_stream.yml
-    - https://grafana.com/grafana/dashboards/13966-kafka-streams-dashboard/
   - Brokers
     - https://github.com/strimzi/strimzi-kafka-operator/tree/main/examples/metrics/grafana-dashboards
 
