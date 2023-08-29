@@ -18,15 +18,7 @@ kubectl apply --server-side -f https://github.com/kedacore/keda/releases/downloa
 ```
 ```
 export JAVA_HOME=$(/usr/libexec/java_home)
-cd app-producer
 mvn clean install spring-boot:build-image
-cd ..
-cd app-processor
-mvn clean install spring-boot:build-image
-cd ..
-cd app-consumer
-mvn clean install spring-boot:build-image
-cd ..
 kubectl apply -f k8s/app/namespace.yml
 kubectl -n kafka apply -f k8s/app/app-topics.yml
 kubectl -n app apply -f k8s/app/app-producer.yml
