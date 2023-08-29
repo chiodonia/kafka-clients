@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ch.post.lab</groupId>
-    <artifactId>app-kafka-clients</artifactId>
+    <artifactId>apps</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
