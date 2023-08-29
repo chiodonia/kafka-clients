@@ -57,6 +57,9 @@ curl http://localhost:8070/produce/2
 
 ### app-processor
 - http://localhost:8080/actuator/prometheus
+- http://localhost:8080/kstream/topology
+- http://localhost:8080/actuator/health/liveness
+- http://localhost:8080/actuator/health/readiness
 ```
 curl http://localhost:8080/processing/1
 ```
