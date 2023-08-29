@@ -31,7 +31,7 @@ kubectl -n app apply -f k8s/app/app-processor-scaler.yml
 ```
 kubectl -n app get pods 
 kubectl -n app get all 
-kubectl -n kafka get all 
+kubectl -n kafka get pods 
 kubectl -n monitoring get pods 
 kubectl -n app logs -f pod/app-consumer-c78c5587c-svt98
 kubectl -n app logs -f deployment/app-consumer --all-containers=true
@@ -50,33 +50,27 @@ kubectl delete -f 'https://strimzi.io/install/latest?namespace=kafka'
 ```
 
 ### app-producer
-http://localhost:8070/actuator/prometheus
-curl http://localhost:8070/produce/10
+- http://localhost:8070/actuator/prometheus
+```
+curl http://localhost:8070/produce/2
+```
 
 ### app-processor
-http://localhost:8080/actuator/prometheus
+- http://localhost:8080/actuator/prometheus
+```
 curl http://localhost:8080/processing/1
+```
 
 ### app-consumer
-http://localhost:8090/actuator/prometheus
+- http://localhost:8090/actuator/prometheus
+```
 curl http://localhost:8090/consume/100
 curl http://localhost:8090/processing/1000
 curl http://localhost:8090/consumer-poll/10
+```
 
 ### Infrastructure
-[Kafka-lag-exporter](http://localhost:9999)
-[Prometheus](http://localhost:9090)
-[Grafana](http://localhost:3000)
-Bootstrap server: localhost:32000
-
-# Kafka client metrics
-The window of time a metrics sample is computed over: metrics.sample.window.ms (30 seconds) 
-
-# TODO
-- Dashboards
-  - kafka streams: complete
-  - k8s: https://github.com/grafana/kubernetes-app/tree/master/src/dashboards
-         https://github.com/dotdc/grafana-dashboards-kubernetes
-  - Brokers
-    - https://github.com/strimzi/strimzi-kafka-operator/tree/main/examples/metrics/grafana-dashboards
-
+- [Kafka-lag-exporter](http://localhost:9999)
+- [Prometheus](http://localhost:9090)
+- [Grafana](http://localhost:3000)
+- Bootstrap server: localhost:32000
